@@ -1,0 +1,35 @@
+services:
+  db-huespedes:
+    image: container-registry.oracle.com/database/free:latest-lite
+    container_name: DbHuespedes
+    mem_limit: 2g
+    ports:
+      - "1521:1521"
+    volumes:
+      - ./DB/scripts/01_huespedes.sql:/opt/oracle/scripts/startup/01_huespedes.sql:ro
+      - db_huespedes_data:/opt/oracle/oradata
+
+  db-habitaciones:
+    image: container-registry.oracle.com/database/free:latest-lite
+    container_name: DbHabitaciones
+    mem_limit: 2g
+    ports:
+      - "1522:1521"
+    volumes:
+      - ./DB/scripts/02_habitaciones.sql:/opt/oracle/scripts/startup/02_habitaciones.sql:ro
+      - db_habitaciones_data:/opt/oracle/oradata
+
+  db-reservas:
+    image: container-registry.oracle.com/database/free:latest-lite
+    container_name: DbReservas
+    mem_limit: 2g
+    ports:
+      - "1523:1521"
+    volumes:
+      - ./DB/scripts/03_reservas.sql:/opt/oracle/scripts/startup/03_reservas.sql:ro
+      - db_reservas_data:/opt/oracle/oradata
+
+volumes:
+  db_huespedes_data:
+  db_habitaciones_data:
+  db_reservas_data:
