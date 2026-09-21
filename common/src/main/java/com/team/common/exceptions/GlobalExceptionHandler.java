@@ -1,6 +1,6 @@
 package com.team.common.exceptions;
 
-import com.carlos.commons.dto.CustomErrorResponse;
+import com.team.common.dto.CustomErrorResponse;
 import feign.FeignException;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
