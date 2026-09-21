@@ -24,6 +24,68 @@ El proyecto debe aplicar obligatoriamente:
 
 ---
 
+# 🗄️ Levantar Bases de Datos (Docker Compose)
+
+El proyecto usa **3 bases de datos Oracle**, una por microservicio, definidas en `compose.yml`:
+- `DbHuespedes` (tabla `HUESPEDES`)
+- `DbHabitaciones` (tabla `HABITACIONES`)
+- `DbReservas` (tabla `RESERVAS`)
+
+Cada contenedor ejecuta automáticamente su script DDL de `DB/scripts/` al arrancar, creando usuario y tabla. La primera vez tarda ~2-3 min por instancia.
+
+### 🚀 Levantar (construir e iniciar)
+
+```bash
+docker compose up --build -d
+```
+
+### ⏸️ Detener (sin borrar contenedores)
+
+```bash
+docker compose stop
+```
+
+### ▶️ Iniciar de nuevo (contenedores ya creados)
+
+```bash
+docker compose start
+```
+
+### 🗑️ Borrar TODO (contenedores **y volúmenes**, pierde los datos)
+
+```bash
+docker compose down -v
+```
+
+> Al volver a levantar con `up --build -d`, los scripts de `DB/scripts/` recrean usuarios y tablas automáticamente.
+
+### 🧹 Borrar sin volúmenes (conserva los datos)
+
+```bash
+docker compose down
+```
+
+### 📊 Conexión a cada Base de Datos
+
+| Base de Datos | Contenedor | Puerto | Usuario | Contraseña | Servicio |
+| --- | --- | --- | --- | --- | --- |
+| Huespedes | DbHuespedes | `1521` | `HUESPEDES` | `huespedes` | `FREEPDB1` |
+| Habitaciones | DbHabitaciones | `1522` | `HABITACIONES` | `habitaciones` | `FREEPDB1` |
+| Reservas | DbReservas | `1523` | `RESERVAS` | `reservas` | `FREEPDB1` |
+
+- Host: `localhost`
+- JDBC por microservicio, p. ej. huespedes: `jdbc:oracle:thin:@//localhost:1521/FREEPDB1` (usuario `HUESPEDES`, contraseña `huespedes`)
+- ⚠️ Usuario en MAYÚSCULAS, contraseña en minúsculas
+
+### 🔎 Verificar que están listas
+
+```bash
+docker ps
+docker logs DbHuespedes | grep -i "DATABASE IS READY"
+```
+
+---
+
 ## 🌐 Arquitectura General (OBLIGATORIA)
 El alumno debe diseñar e implementar completamente la siguiente arquitectura:
 

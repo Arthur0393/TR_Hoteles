@@ -7,7 +7,7 @@ import java.util.Date;
 public record ReservaResponse (
 
         @Schema(
-                description =
+                description = "Identificador de la reserva"
         )
         Long idReserva,
 
