@@ -1,0 +1,2 @@
+# Fin de linea LF para scripts SQL (sqlplus en contenedores Linux los requiere)
+*.sql text eol=lf
