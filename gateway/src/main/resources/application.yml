@@ -9,10 +9,24 @@ spring:
       server:
         webflux:
           routes:
-            - id: medicos
-              uri: lb://medicos
+            - id: huespedes
+              uri: lb://huespedes
               predicates:
-                - Path=/api/medicos/**
+                - Path=/api/huespedes/**
+              filters:
+                - StripPrefix=2
+
+            - id: habitaciones
+              uri: lb://habitaciones
+              predicates:
+                - Path=/api/habitaciones/**
+              filters:
+                - StripPrefix=2
+
+            - id: reservas
+              uri: lb://reservas
+              predicates:
+                - Path=/api/reservas/**
               filters:
                 - StripPrefix=2
     loadbalancer:
