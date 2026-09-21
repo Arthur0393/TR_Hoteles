@@ -1,4 +1,4 @@
-package com.carlos.commons.exceptions;
+package com.team.common.exceptions;
 
 import com.carlos.commons.dto.CustomErrorResponse;
 import feign.FeignException;

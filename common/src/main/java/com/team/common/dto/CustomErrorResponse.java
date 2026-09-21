@@ -1,4 +1,4 @@
-package com.carlos.commons.dto;
+package com.team.common.dto;
 
 public record CustomErrorResponse(
         int codigo,

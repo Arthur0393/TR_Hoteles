@@ -1,4 +1,4 @@
-package com.carlos.commons.mapper;
+package com.team.common.mapper;
 
 public interface CommonMapper<RQ, RS, E>{
 

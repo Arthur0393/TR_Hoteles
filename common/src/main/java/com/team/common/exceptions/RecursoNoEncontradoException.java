@@ -1,4 +1,4 @@
-package com.carlos.commons.exceptions;
+package com.team.common.exceptions;
 
 public class RecursoNoEncontradoException extends RuntimeException {
     public RecursoNoEncontradoException(String message) {
