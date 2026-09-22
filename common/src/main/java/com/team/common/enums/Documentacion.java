@@ -12,10 +12,10 @@ import java.util.Objects;
 public enum Documentacion {
 
 
-    CREDENCIA(1L, "Credencial de identificacion del huesped"),
-    PASAPORTE(2L, "Pasaporte del huesped"),
-    CARTILLA_MILITAR(3L, "Cartilla Militar del huesped"),
-    CURP(4L, "CURP del huesped"),;
+    CREDENCIAL(1L, "Credencial"),
+    PASAPORTE(2L, "Pasaporte"),
+    CARTILLA_MILITAR(3L, "Cartilla Militar"),
+    CURP(4L, "Curp"),;
 
 
 

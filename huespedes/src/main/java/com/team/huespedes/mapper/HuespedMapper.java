@@ -10,10 +10,10 @@ import org.springframework.stereotype.Component;
 
 
 @Component
-public interface HuespedMapper extends CommonMapper<HuespedRequest, HuespedResponse, Huesped>
+public class HuespedMapper implements CommonMapper<HuespedRequest, HuespedResponse, Huesped>
 {
     @Override
-    default Huesped requestAEntidad(HuespedRequest request) {
+    public Huesped requestAEntidad(HuespedRequest request) {
        return Huesped.crear(
                request.nombre().trim(),
                request.apellidoPaterno().trim(),
@@ -29,13 +29,13 @@ public interface HuespedMapper extends CommonMapper<HuespedRequest, HuespedRespo
     }
 
     @Override
-    default HuespedResponse entidadAResponse(Huesped entidad) {
+    public HuespedResponse entidadAResponse(Huesped entidad) {
         return new  HuespedResponse
                 (
                 entidad.getIdHuesped(),
                 String.join(" ",entidad.getNombre(),
                         entidad.getApellidoPaterno(),
-                        entidad.getApellidoPaterno()),
+                        entidad.getApellidoMaterno()),
                         entidad.getEmail(),
                         entidad.getTelefono(),
                         entidad.getDocumento().getDescripcion(),

@@ -39,6 +39,7 @@ public class Huesped {
     @Column(name = "TELEFONO",nullable = false,length = 10)
     String telefono;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "DOCUMENTO",nullable = false,length = 30)
     Documentacion documento;
 
@@ -100,13 +101,13 @@ public class Huesped {
     {
 
         StringCustomUtils.validarNoVacio(nombre,"El nombre no puede estar vacio");
-        StringCustomUtils.validarTamanio(nombre,2,30,"El valor del nombre debe de estar entre 2 y 30 caracteres");
+        StringCustomUtils.validarTamanio(nombre,2,50,"El valor del nombre debe de estar entre 2 y 50 caracteres");
 
         StringCustomUtils.validarNoVacio(apellidoPaterno,"El apellido paterno  no puede estar vacio");
-        StringCustomUtils.validarTamanio(apellidoPaterno,2,30,"El valor del apellido paterno debe de estar entre 2 y 30 caracteres");
+        StringCustomUtils.validarTamanio(apellidoPaterno,2,50,"El valor del apellido paterno debe de estar entre 2 y 50 caracteres");
 
         StringCustomUtils.validarNoVacio(apellidoMaterno,"El apellido materno no puede estar vacio");
-        StringCustomUtils.validarTamanio(apellidoMaterno,2,30,"El valor del apellido materno debe de estar entre 2 y 30 caracteres");
+        StringCustomUtils.validarTamanio(apellidoMaterno,2,50,"El valor del apellido materno debe de estar entre 2 y 50 caracteres");
 
         StringCustomUtils.validarNoVacio(email,"El email no puede estar vacio");
         StringCustomUtils.validarTamanio(email,1,100,"El email  debe de estar entre 1 y 100 caracteres");
