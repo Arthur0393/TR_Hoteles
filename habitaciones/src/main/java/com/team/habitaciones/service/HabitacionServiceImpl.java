@@ -138,6 +138,34 @@ public class HabitacionServiceImpl implements HabitacionService {
     }
 
     /**
+     * Uso interno del microservicio de reservas: ocupa una habitacion DISPONIBLE.
+     * Se rechaza con 409 cuando la habitacion no puede pasar a OCUPADA.
+     */
+    @Transactional
+    @Override
+    public void ocupar(Long id) {
+        log.info("Ocupando habitacion con ID {} por solicitud de reservas", id);
+
+        Habitacion habitacion = buscarHabitacionActiva(id);
+        habitacion.ocupar();
+        habitacionRepository.save(habitacion);
+    }
+
+    /**
+     * Uso interno del microservicio de reservas: libera una habitacion OCUPADA.
+     * Se rechaza con 409 cuando la habitacion no puede pasar a DISPONIBLE.
+     */
+    @Transactional
+    @Override
+    public void liberar(Long id) {
+        log.info("Liberando habitacion con ID {} por solicitud de reservas", id);
+
+        Habitacion habitacion = buscarHabitacionActiva(id);
+        habitacion.liberar();
+        habitacionRepository.save(habitacion);
+    }
+
+    /**
      * Reutiliza en varias operaciones la busqueda de una habitacion activa y la
      * construccion del error 404 cuando no se encuentra.
      */

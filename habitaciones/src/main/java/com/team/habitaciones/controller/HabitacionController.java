@@ -349,4 +349,42 @@ public class HabitacionController extends CrudController<
     ) {
         return ResponseEntity.ok(service.cambiarEstado(id, idEstado));
     }
+
+    /**
+     * Uso interno del microservicio de reservas: ocupa una habitacion DISPONIBLE.
+     * No forma parte del API publico para recepcionistas.
+     */
+    @Operation(
+            summary = "Ocupar habitacion (uso interno)",
+            description = "Cambia DISPONIBLE a OCUPADA cuando una reserva "
+                    + "asigna la habitacion. Consumido por reservas via Feign."
+    )
+    @PutMapping("/{id}/ocupar")
+    public ResponseEntity<Void> ocupar(
+            @PathVariable
+            @Positive(message = "El ID de la habitacion debe ser positivo")
+            Long id
+    ) {
+        service.ocupar(id);
+        return ResponseEntity.ok().build();
+    }
+
+    /**
+     * Uso interno del microservicio de reservas: libera una habitacion OCUPADA
+     * tras check-out o cancelacion.
+     */
+    @Operation(
+            summary = "Liberar habitacion (uso interno)",
+            description = "Cambia OCUPADA a DISPONIBLE tras el check-out o la "
+                    + "cancelacion de la reserva. Consumido por reservas via Feign."
+    )
+    @PutMapping("/{id}/liberar")
+    public ResponseEntity<Void> liberar(
+            @PathVariable
+            @Positive(message = "El ID de la habitacion debe ser positivo")
+            Long id
+    ) {
+        service.liberar(id);
+        return ResponseEntity.ok().build();
+    }
 }

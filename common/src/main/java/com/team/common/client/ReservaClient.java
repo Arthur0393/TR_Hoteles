@@ -1,14 +1,13 @@
 package com.team.common.client;
 
 
-import com.team.common.dto.habitaciones.HabitacionResponse;
-import com.team.common.dto.huespedes.HuespedResponse;
 import org.springframework.cloud.openfeign.FeignClient;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @FeignClient("reservas")
 public interface ReservaClient {
 
-
+    @GetMapping("/id-huesped/{idHuesped}/en-curso")
+    boolean tieneReservasEnCurso(@PathVariable("idHuesped") Long idHuesped);
 }

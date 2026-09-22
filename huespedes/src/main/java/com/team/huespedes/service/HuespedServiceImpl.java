@@ -2,8 +2,10 @@ package com.team.huespedes.service;
 
 import com.team.common.dto.huespedes.HuespedRequest;
 import com.team.common.dto.huespedes.HuespedResponse;
+import com.team.common.client.ReservaClient;
 import com.team.common.enums.Documentacion;
 import com.team.common.enums.EstadoRegistro;
+import com.team.common.exceptions.EntidadRelacionadaException;
 import com.team.common.exceptions.RecursoNoEncontradoException;
 import com.team.common.utils.StringCustomUtils;
 import com.team.common.utils.ValoresNumerico;
@@ -26,6 +28,8 @@ public class HuespedServiceImpl implements HuespedService {
     private final HuespedRepository huespedRepository;
 
     private final HuespedMapper huespedMapper;
+
+    private final ReservaClient reservaClient;
 
     private static final String MENSAJE_DUPLICADO = "Ya existe un huesped ACTIVO con este %s";
 
@@ -84,8 +88,15 @@ public class HuespedServiceImpl implements HuespedService {
 
     @Override
     public void eliminar(Long id) {
-        // Pendiente: validar contra reservas EN_CURSO una vez exista ese microservicio
+
         Huesped huesped = obtenerHuespedActivo(id);
+
+        if (reservaClient.tieneReservasEnCurso(id)) {
+            throw new EntidadRelacionadaException(
+                    "No se puede eliminar el huesped " + id
+                            + " porque tiene reservas EN_CURSO"
+            );
+        }
 
         log.info("Eliminando logicamente el huesped con id {}", id);
 

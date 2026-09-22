@@ -10,4 +10,14 @@ public interface HabitacionService extends CrudService <HabitacionRequest, Habit
      * Cambia el estado operativo usando su codigo de catalogo.
      */
     HabitacionResponse cambiarEstado(Long id, Long idEstado);
+
+    /**
+     * Marca la habitacion como OCUPADA (uso interno del micro de reservas).
+     */
+    void ocupar(Long id);
+
+    /**
+     * Marca la habitacion como DISPONIBLE (uso interno del micro de reservas).
+     */
+    void liberar(Long id);
 }

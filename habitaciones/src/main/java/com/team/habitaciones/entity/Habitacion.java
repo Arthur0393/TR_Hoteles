@@ -170,6 +170,40 @@ public class Habitacion {
     }
 
     /**
+     * Ocupa una habitacion activa cuando una reserva la asigna.
+     * Solo es posible desde DISPONIBLE; el resto de casos se rechaza con 409.
+     */
+    public void ocupar() {
+        validarNoEliminado();
+
+        if (!EstadoHabitacion.DISPONIBLE.name().equals(this.estadoHabitacion)) {
+            throw new IllegalStateException(
+                    "La habitacion " + this.id + " no esta disponible, su estado actual es "
+                            + this.estadoHabitacion
+            );
+        }
+
+        this.estadoHabitacion = EstadoHabitacion.OCUPADA.name();
+    }
+
+    /**
+     * Libera una habitacion ocupada tras el check-out o la cancelacion de la reserva.
+     * Solo es posible desde OCUPADA; el cambio manual desde otro estado se rechaza.
+     */
+    public void liberar() {
+        validarNoEliminado();
+
+        if (!EstadoHabitacion.OCUPADA.name().equals(this.estadoHabitacion)) {
+            throw new IllegalStateException(
+                    "No se puede liberar la habitacion " + this.id
+                            + " porque su estado actual es " + this.estadoHabitacion
+            );
+        }
+
+        this.estadoHabitacion = EstadoHabitacion.DISPONIBLE.name();
+    }
+
+    /**
      * Sustituye los datos editables de una habitación conservando su identificador.
      * Primero comprueba el estado actual y todos los nuevos valores para evitar
      * modificar parcialmente el objeto si alguna validación falla.
