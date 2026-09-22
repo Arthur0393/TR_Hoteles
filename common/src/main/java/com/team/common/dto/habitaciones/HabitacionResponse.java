@@ -1,5 +1,8 @@
 package com.team.common.dto.habitaciones;
 
+import com.team.common.enums.EstadoHabitacion;
+import com.team.common.enums.EstadoRegistro;
+import com.team.common.enums.TipoHabitacion;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.math.BigDecimal;
@@ -14,31 +17,30 @@ public record HabitacionResponse(
                 description = "Numero de la habitacion",
                 example = "1"
         )
-        Number numero,
+        Integer numeroHabitacion,
         @Schema(
                 description = "Tipo de habitacion",
                 example = "SENCILLA"
         )
-        String tipo,
+        TipoHabitacion tipoHabitacion,
         @Schema(
                 description = "Precio de la habitacion",
                 example = "5000.00"
         )
-        BigDecimal precios,
+        BigDecimal precio,
         @Schema(
                 description = "Capacidad de la habitacion",
                 example = "4"
         )
-        Number capacidad,
+        Integer capacidad,
         @Schema(
                 description = "Estado de la habitacion",
                 example = "OCUPADA"
         )
-        String estadoHabitacion,
+        EstadoHabitacion estadoHabitacion,
         @Schema(
                 description = "Estado del registro de la Habitacion",
                 example = "ACTIVO"
         )
-        String estadoRegistro
-) {
-}
+        EstadoRegistro estadoRegistro
+) {}

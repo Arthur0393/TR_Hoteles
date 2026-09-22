@@ -1,5 +1,8 @@
 package com.team.common.mapper;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public interface CommonMapper<RQ, RS, E>{
 
    E requestAEntidad(RQ request);
