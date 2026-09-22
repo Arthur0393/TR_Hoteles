@@ -58,7 +58,8 @@ public record HuespedRequest(
                 example = "PASAPORTE"
         )
         @NotBlank(message= "El documento de identificacion del huesped es requerido")
-        @Size(min = 1, max = 30, message = "El documento debe tener de 1 a 30 caracteres")
+        @Pattern(regexp = "CREDENCIAL|PASAPORTE|CARTILLA_MILITAR|CURP",
+                message = "Tipo de documento no valido, use: CREDENCIAL, PASAPORTE, CARTILLA_MILITAR o CURP")
         String documento,
 
         @Schema(
