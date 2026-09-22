@@ -9,7 +9,6 @@ public record ReservaResponse (
         @Schema(
                 description = "Identificador unico de la reserva",
                 example = "1"
-
         )
         Long idReserva,
 
