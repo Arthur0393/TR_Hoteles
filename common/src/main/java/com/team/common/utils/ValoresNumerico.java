@@ -2,6 +2,14 @@ package com.team.common.utils;
 
 public class ValoresNumerico {
 
+    public static <N extends Number> void  validarNumeroRequerido (N numero)
+    {
+        if (numero==null)
+        {
+            throw  new IllegalArgumentException("El valor numerico es requerido");
+        }
+    }
+
     public static void validarNumeroPositivo(Number numero, String mensaje) {
         validarNumeroRequerido(numero);
 
@@ -24,8 +32,5 @@ public class ValoresNumerico {
             throw new IllegalArgumentException(mensaje);
     }
 
-    private static void validarNumeroRequerido(Number numero) {
-        if (numero == null)
-            throw new IllegalArgumentException("El numero es requerido");
-    }
+
 }
