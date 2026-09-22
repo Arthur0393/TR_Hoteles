@@ -9,22 +9,10 @@ public record HuespedResponse(@Schema(
       Long idHuesped,
 
       @Schema(
-              description = "Nombre del Huesped",
-              example = "Juan Carlos"
+              description = "Nombre completo del huesped",
+              example = "Juan Carlos Hernandez Martinez"
       )
       String nombre,
-
-      @Schema(
-              description = "Apellido Paterno del Huesped",
-              example = "Hernandez"
-      )
-      String apellidoPaterno,
-
-      @Schema(
-              description = "Apellido Materno del Huesped",
-              example = "Gomez"
-      )
-      String apellidoMaterno,
 
       @Schema (
               description = "Correo electronico del huesped",
@@ -44,15 +32,18 @@ public record HuespedResponse(@Schema(
       )
       String documento,
 
+                              @Schema(
+                                      description = "5 digitos finales que acompañan al documento",
+                                      example = "83727") String numDocumento,
+
+
+
       @Schema(
               description = "Nacionalidad del huesped",
               example = "Mexico"
       )
-      String nacionalidad,
+      String nacionalidad)
 
-    @Schema
-            (description = "Estado del registro del huesped",
-            example = "ACTIVO")
-    String estadoRegistro)
+
 
 {}
