@@ -32,18 +32,14 @@ public record HuespedResponse(@Schema(
       )
       String documento,
 
-                              @Schema(
-                                      description = "5 digitos finales que acompañan al documento",
-                                      example = "83727") String numDocumento,
-
-
+      @Schema(
+              description = "5 digitos finales que acompañan al documento",
+              example = "83727")
+      String numDocumento,
 
       @Schema(
               description = "Nacionalidad del huesped",
               example = "Mexico"
       )
       String nacionalidad)
-
-
-
 {}
