@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 public record ReservaRequest(
         @Schema(
@@ -25,15 +25,15 @@ public record ReservaRequest(
 
         @Schema(
                 description = "Fecha de entrada del huesped",
-                example = "19/09/2026"
+                example = "2026-09-19"
         )
-        @NotNull(message = "La fecha de entrada del huesped es requerida")
-        Date fechaEntrada,
+        @NotNull(message = "La fecha de entrada de la reserva es requerida")
+        LocalDate fechaEntrada,
 
         @Schema(
                 description = "Fecha de salida del huesped",
-                example = "30/09/2026"
+                example = "2026-09-30"
         )
-        @NotNull(message = "La fecha de salida del huesped es requerida")
-        Date fechaSalida
+        @NotNull(message = "La fecha de salida de la reserva es requerida")
+        LocalDate fechaSalida
 ) {}
