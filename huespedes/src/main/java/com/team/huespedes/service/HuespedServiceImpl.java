@@ -31,8 +31,6 @@ public class HuespedServiceImpl implements HuespedService {
 
     private final ReservaClient reservaClient;
 
-    private static final String MENSAJE_DUPLICADO = "Ya existe un huesped ACTIVO con este %s";
-
     @Transactional(readOnly = true)
     @Override
     public List<HuespedResponse> listar() {
@@ -146,7 +144,7 @@ public class HuespedServiceImpl implements HuespedService {
         Optional<Huesped> huespedDuplicado = huespedRepository.findByEmailIgnoreCaseAndEstadoRegistro(email, EstadoRegistro.ACTIVO);
 
         if (huespedDuplicado.isPresent() && esOtroRegistro(huespedDuplicado.get(), idActual)) {
-            throw new IllegalStateException(String.format(MENSAJE_DUPLICADO, "email"));
+            throw new IllegalStateException("Este email ya se encuentra registrado :"+email);
         }
     }
 
@@ -156,7 +154,7 @@ public class HuespedServiceImpl implements HuespedService {
         Optional<Huesped> huespedDuplicado = huespedRepository.findByTelefonoAndEstadoRegistro(telefono, EstadoRegistro.ACTIVO);
 
         if (huespedDuplicado.isPresent() && esOtroRegistro(huespedDuplicado.get(), idActual)) {
-            throw new IllegalStateException(String.format(MENSAJE_DUPLICADO, "telefono"));
+            throw new IllegalStateException("Este telefono ya se encuentra registrado :"+telefono);
         }
     }
 
@@ -164,7 +162,7 @@ public class HuespedServiceImpl implements HuespedService {
         Optional<Huesped> huespedDuplicado = huespedRepository.findByDocumentoAndNumDocumentoAndEstadoRegistro(documento, numDocumento, EstadoRegistro.ACTIVO);
 
         if (huespedDuplicado.isPresent() && esOtroRegistro(huespedDuplicado.get(), idActual)) {
-            throw new IllegalStateException(MENSAJE_DUPLICADO.formatted("documento"));
+            throw new IllegalStateException("Este documento ya se encuentra registrado "+documento.getDescripcion()+numDocumento);
         }
     }
 
