@@ -27,9 +27,6 @@ import java.util.Objects;
 @Slf4j
 public class ReservaServiceImpl implements ReservaService {
 
-    private static final List<EstadoReserva> ESTADOS_VIGENTES =
-            List.of(EstadoReserva.CONFIRMADA, EstadoReserva.EN_CURSO);
-
     private final ReservaRepository reservaRepository;
 
     private final ReservaMapper reservaMapper;
@@ -63,10 +60,8 @@ public class ReservaServiceImpl implements ReservaService {
         HabitacionResponse habitacion = obtenerHabitacionActiva(request.idHabitacion());
 
         validarHabitacionDisponible(habitacion);
-        validarHabitacionSinReservaVigente(request.idHabitacion());
 
-        Reserva reserva = reservaMapper.requestAEntidad(request);
-        Reserva guardada = reservaRepository.saveAndFlush(reserva);
+        Reserva guardada = reservaRepository.save(reservaMapper.requestAEntidad(request));
 
         log.info("Reserva {} registrada para el huesped {} y la habitacion {}",
                 guardada.getIdReserva(), guardada.getIdHuesped(), guardada.getIdHabitacion());
@@ -83,6 +78,8 @@ public class ReservaServiceImpl implements ReservaService {
         Reserva reserva = obtenerReservaActiva(id);
 
         validarMismosParticipantes(reserva, request);
+
+
 
         reserva.actualizarFechas(request.fechaEntrada(), request.fechaSalida());
 
@@ -116,8 +113,8 @@ public class ReservaServiceImpl implements ReservaService {
     public void eliminar(Long id) {
 
         Reserva reserva = obtenerReservaActiva(id);
-
         reserva.eliminar();
+        liberarHabitacionRemota(id);
         reservaRepository.save(reserva);
 
         log.info("Reserva {} eliminada logicamente", id);
@@ -174,19 +171,6 @@ public class ReservaServiceImpl implements ReservaService {
             throw new IllegalStateException(
                     "La habitacion " + habitacion.idHabitacion()
                             + " no esta disponible, su estado actual es " + habitacion.estadoHabitacion()
-            );
-        }
-    }
-
-    private void validarHabitacionSinReservaVigente(Long idHabitacion) {
-
-        boolean tieneReservaVigente = reservaRepository
-                .existsByIdHabitacionAndEstadoReservaInAndEstadoRegistro(
-                        idHabitacion, ESTADOS_VIGENTES, EstadoRegistro.ACTIVO);
-
-        if (tieneReservaVigente) {
-            throw new IllegalStateException(
-                    "La habitacion " + idHabitacion + " ya tiene una reserva vigente"
             );
         }
     }
