@@ -83,7 +83,7 @@ public class Reserva {
         this.fechaSalida = fechaSalida;
     }
 
-    public void cambiarEstado(EstadoReserva nuevoEstado) {
+    public void cambiarEstado(EstadoReserva nuevoEstado) { //ENUM
         validarNoEliminada();
         ObjectCustomUtils.validarObjVacios(nuevoEstado, "El estado de la reserva es requerido");
 
@@ -116,7 +116,7 @@ public class Reserva {
         this.estadoRegistro = EstadoRegistro.ELIMINADO;
     }
 
-    private void validarNoEliminada() {
+    private void validarNoEliminada() { //ENUM
         if (EstadoRegistro.ELIMINADO.equals(this.estadoRegistro)) {
             throw new IllegalStateException("La reserva ya esta eliminada");
         }

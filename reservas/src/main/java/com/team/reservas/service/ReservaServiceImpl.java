@@ -63,7 +63,7 @@ public class ReservaServiceImpl implements ReservaService {
         HabitacionResponse habitacion = obtenerHabitacionActiva(request.idHabitacion());
 
         validarHabitacionDisponible(habitacion);
-        validarHabitacionSinReservaVigente(request.idHabitacion());
+        validarHabitacionSinReservaVigente(request.idHabitacion()); //ESTA DE MAS EN REGISTRAR (REVISAR)
 
         Reserva reserva = reservaMapper.requestAEntidad(request);
         Reserva guardada = reservaRepository.saveAndFlush(reserva);
@@ -125,7 +125,7 @@ public class ReservaServiceImpl implements ReservaService {
 
     @Transactional(readOnly = true)
     @Override
-    public boolean tieneReservasEnCurso(Long idHuesped) {
+    public boolean tieneReservasEnCurso(Long idHuesped) { //NOMBRE AMBIGUO
 
         ValoresNumerico.validarNumeroRequerido(idHuesped);
 

@@ -124,14 +124,14 @@ public class HabitacionServiceImpl implements HabitacionService {
      * el cambio. La entidad impide liberar manualmente una habitacion OCUPADA.
      */
     @Override
-    public HabitacionResponse cambiarEstado(Long id, Long idEstado) {
+    public HabitacionResponse cambiarEstado(Long id, Long idEstado) { //Nombre ambiguo
         log.info("Cambiando habitacion con ID {} al estado con codigo {}", id, idEstado);
 
         Habitacion habitacion = buscarHabitacionActiva(id);
         EstadoHabitacion nuevoEstado = EstadoHabitacion.obtenerEstadoPorCodigo(idEstado);
 
         habitacion.cambiarEstado(nuevoEstado);
-        Habitacion actualizada = habitacionRepository.save(habitacion);
+        Habitacion actualizada = habitacionRepository.save(habitacion); //Una sola variable
 
         log.info("Habitacion con ID {} cambiada al estado {}", id, nuevoEstado.name());
         return habitacionesMapper.entidadAResponse(actualizada);

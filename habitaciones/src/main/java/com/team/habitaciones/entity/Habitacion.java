@@ -59,7 +59,7 @@ public class Habitacion {
     // Estado lógico del registro, como ACTIVO o ELIMINADO, almacenado como texto.
     // Permite marcar una eliminación conservando la fila en la base de datos.
     @Column(name = "ESTADO_REGISTRO", nullable = false)
-    private String estadoRegistro;
+    private String estadoRegistro; //USAR LOS ENUMS Y MODIFICAR SU COMPORTAMIENTO EN LO DEMAS
 
 
     /**
