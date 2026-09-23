@@ -8,5 +8,5 @@ public interface ReservaService extends CrudService<ReservaRequest, ReservaRespo
 
     ReservaResponse cambiarEstado(Long idReserva, Long idEstado);
 
-    boolean tieneReservasEnCurso(Long idHuesped);
+    void tieneReservasEnCurso(Long idHuesped);
 }

@@ -36,9 +36,9 @@ public class ReservaController extends CrudController<ReservaRequest, ReservaRes
     @Operation(summary = "Indica si el huesped tiene reservas EN_CURSO",
             description = "Uso interno del microservicio de huespedes")
     @GetMapping("/id-huesped/{idHuesped}/en-curso")
-    public boolean tieneReservasEnCurso(
+    public void tieneReservasEnCurso(
             @PathVariable @Positive(message = "El ID del huesped debe ser positivo") Long idHuesped
     ) {
-        return service.tieneReservasEnCurso(idHuesped);
+        service.tieneReservasEnCurso(idHuesped);
     }
 }

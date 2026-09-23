@@ -125,12 +125,13 @@ public class ReservaServiceImpl implements ReservaService {
 
     @Transactional(readOnly = true)
     @Override
-    public boolean tieneReservasEnCurso(Long idHuesped) {
+    public void tieneReservasEnCurso(Long idHuesped) {
 
         ValoresNumerico.validarNumeroRequerido(idHuesped);
 
-        return reservaRepository.existsByIdHuespedAndEstadoReservaAndEstadoRegistro(
-                idHuesped, EstadoReserva.EN_CURSO, EstadoRegistro.ACTIVO);
+        if (reservaRepository.existsByIdHuespedAndEstadoReservaAndEstadoRegistro(
+                idHuesped, EstadoReserva.EN_CURSO, EstadoRegistro.ACTIVO))
+            throw new IllegalStateException("El huesped tiene reservas en curso y activas");
     }
 
     private Reserva obtenerReservaActiva(Long id) {
