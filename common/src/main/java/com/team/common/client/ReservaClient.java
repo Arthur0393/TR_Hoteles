@@ -9,5 +9,5 @@ import org.springframework.web.bind.annotation.PathVariable;
 public interface ReservaClient {
 
     @GetMapping("/id-huesped/{idHuesped}/en-curso")
-    boolean tieneReservasEnCurso(@PathVariable("idHuesped") Long idHuesped);
+    void tieneReservasEnCurso(@PathVariable("idHuesped") Long idHuesped);
 }
