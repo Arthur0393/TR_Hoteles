@@ -93,6 +93,18 @@ public class Huesped {
         this.estadoRegistro = estadoRegistro;
     }
 
+    public void eliminar()
+    {
+
+        if (EstadoRegistro.ELIMINADO.equals(this.estadoRegistro)) {
+            throw new IllegalStateException("El huesped ya se encuentra eliminado");
+        }
+
+        this.estadoRegistro=EstadoRegistro.ELIMINADO;
+
+    }
+
+
 
 
 

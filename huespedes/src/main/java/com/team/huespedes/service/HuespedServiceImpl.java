@@ -100,17 +100,7 @@ public class HuespedServiceImpl implements HuespedService {
 
         log.info("Eliminando logicamente el huesped con id {}", id);
 
-        huesped.actualizar(
-                huesped.getNombre(),
-                huesped.getApellidoPaterno(),
-                huesped.getApellidoMaterno(),
-                huesped.getEmail(),
-                huesped.getTelefono(),
-                huesped.getDocumento(),
-                huesped.getNumDocumento(),
-                huesped.getNacionalidad(),
-                EstadoRegistro.ELIMINADO
-        );
+        huesped.eliminar();
 
         huespedRepository.save(huesped);
     }
@@ -121,25 +111,23 @@ public class HuespedServiceImpl implements HuespedService {
         return huespedMapper.entidadAResponse(obtenerHuespedSinEstado(id));
     }
 
-    private Huesped obtenerHuespedActivo(Long id)
-    {
+    private Huesped obtenerHuespedActivo(Long id) {
         log.info("Obteniendo huesped activo con id {}", id);
 
         ValoresNumerico.validarNumeroRequerido(id);
 
-        return huespedRepository.findByIdHuespedAndEstadoRegistro(id,EstadoRegistro.ACTIVO).orElseThrow(
-                ()-> new RecursoNoEncontradoException("NO se ha encontrado el huesped activo con id "+id)
+        return huespedRepository.findByIdHuespedAndEstadoRegistro(id, EstadoRegistro.ACTIVO).orElseThrow(
+                () -> new RecursoNoEncontradoException("NO se ha encontrado el huesped activo con id " + id)
         );
     }
 
-    private Huesped obtenerHuespedSinEstado(Long id)
-    {
+    private Huesped obtenerHuespedSinEstado(Long id) {
         log.info("Obteniendo huesped sin estado  con id {}", id);
 
         ValoresNumerico.validarNumeroRequerido(id);
 
         return huespedRepository.findById(id).orElseThrow(
-                ()-> new RecursoNoEncontradoException("NO se ha encontrado el huesped con id "+id)
+                () -> new RecursoNoEncontradoException("NO se ha encontrado el huesped con id " + id)
         );
     }
 
@@ -153,7 +141,7 @@ public class HuespedServiceImpl implements HuespedService {
     }
 
     private void validarEmail(String email, Long idActual) {
-        StringCustomUtils.validarNoVacio(email,"El email del huesped es requerido");
+        StringCustomUtils.validarNoVacio(email, "El email del huesped es requerido");
 
         Optional<Huesped> huespedDuplicado = huespedRepository.findByEmailIgnoreCaseAndEstadoRegistro(email, EstadoRegistro.ACTIVO);
 
@@ -179,6 +167,7 @@ public class HuespedServiceImpl implements HuespedService {
             throw new IllegalStateException(MENSAJE_DUPLICADO.formatted("documento"));
         }
     }
+
     private boolean esOtroRegistro(Huesped huesped, Long idActual) {
         return idActual == null || !huesped.getIdHuesped().equals(idActual);
     }
