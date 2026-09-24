@@ -79,8 +79,6 @@ public class ReservaServiceImpl implements ReservaService {
 
         validarMismosParticipantes(reserva, request);
 
-
-
         reserva.actualizarFechas(request.fechaEntrada(), request.fechaSalida());
 
         log.info("Reserva {} actualizada", id);

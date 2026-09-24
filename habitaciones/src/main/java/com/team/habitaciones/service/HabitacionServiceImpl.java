@@ -67,10 +67,10 @@ public class HabitacionServiceImpl implements HabitacionService {
         validarNumeroParaRegistro(request.numeroHabitacion());
 
         Habitacion habitacion = habitacionesMapper.requestAEntidad(request);
-        Habitacion guardada = habitacionRepository.save(habitacion);
+        habitacionRepository.save(habitacion);
 
         log.info("Habitacion registrada con ID {}", habitacion.getId());
-        return habitacionesMapper.entidadAResponse(guardada);
+        return habitacionesMapper.entidadAResponse(habitacion);
     }
 
     /**
