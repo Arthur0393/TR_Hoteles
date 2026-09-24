@@ -1,5 +1,7 @@
 package com.team.habitaciones.repositories;
 
+import com.team.common.enums.EstadoHabitacion;
+import com.team.common.enums.EstadoRegistro;
 import com.team.habitaciones.entity.Habitacion;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -19,7 +21,7 @@ public interface HabitacionRepository
      * que existe dentro de la entidad Habitacion.
      */
     List<Habitacion> findAllByEstadoRegistro(
-            String estadoRegistro
+            EstadoRegistro estadoRegistro
     );
 
     /*
@@ -32,7 +34,7 @@ public interface HabitacionRepository
      */
     Optional<Habitacion> findByIdAndEstadoRegistro(
             Long id,
-            String estadoRegistro
+            EstadoRegistro estadoRegistro
     );
 
     /*
@@ -44,7 +46,7 @@ public interface HabitacionRepository
      */
     boolean existsByNumeroHabitacionAndEstadoRegistro(
             Integer numeroHabitacion,
-            String estadoRegistro
+            EstadoRegistro estadoRegistro
     );
 
     /*
@@ -57,7 +59,7 @@ public interface HabitacionRepository
      */
     boolean existsByNumeroHabitacionAndEstadoRegistroAndIdNot(
             Integer numeroHabitacion,
-            String estadoRegistro,
+            EstadoRegistro estadoRegistro,
             Long id
     );
 
@@ -71,7 +73,7 @@ public interface HabitacionRepository
      */
     boolean existsByIdAndEstadoHabitacionAndEstadoRegistro(
             Long id,
-            String estadoHabitacion,
-            String estadoRegistro
+            EstadoHabitacion estadoHabitacion,
+            EstadoRegistro estadoRegistro
     );
 }

@@ -9,6 +9,7 @@ import com.team.common.enums.EstadoHabitacion;
 import com.team.common.enums.EstadoRegistro;
 import com.team.common.enums.EstadoReserva;
 import com.team.common.exceptions.RecursoNoEncontradoException;
+import com.team.common.utils.ObjectCustomUtils;
 import com.team.common.utils.ValoresNumerico;
 import com.team.reservas.entity.Reserva;
 import com.team.reservas.mapper.ReservaMapper;
@@ -25,10 +26,8 @@ import java.util.Objects;
 @Service
 @AllArgsConstructor
 @Slf4j
+@Transactional
 public class ReservaServiceImpl implements ReservaService {
-
-    private static final List<EstadoReserva> ESTADOS_VIGENTES =
-            List.of(EstadoReserva.CONFIRMADA, EstadoReserva.EN_CURSO);
 
     private final ReservaRepository reservaRepository;
 
@@ -63,10 +62,8 @@ public class ReservaServiceImpl implements ReservaService {
         HabitacionResponse habitacion = obtenerHabitacionActiva(request.idHabitacion());
 
         validarHabitacionDisponible(habitacion);
-        validarHabitacionSinReservaVigente(request.idHabitacion()); //ESTA DE MAS EN REGISTRAR (REVISAR)
 
-        Reserva reserva = reservaMapper.requestAEntidad(request);
-        Reserva guardada = reservaRepository.saveAndFlush(reserva);
+        Reserva guardada = reservaRepository.save(reservaMapper.requestAEntidad(request));
 
         log.info("Reserva {} registrada para el huesped {} y la habitacion {}",
                 guardada.getIdReserva(), guardada.getIdHuesped(), guardada.getIdHabitacion());
@@ -76,7 +73,7 @@ public class ReservaServiceImpl implements ReservaService {
         return reservaMapper.entidadAResponse(guardada);
     }
 
-    @Transactional
+
     @Override
     public ReservaResponse actualizar(ReservaRequest request, Long id) {
 
@@ -91,7 +88,7 @@ public class ReservaServiceImpl implements ReservaService {
         return reservaMapper.entidadAResponse(reservaRepository.saveAndFlush(reserva));
     }
 
-    @Transactional
+
     @Override
     public ReservaResponse cambiarEstado(Long idReserva, Long idEstado) {
 
@@ -111,13 +108,22 @@ public class ReservaServiceImpl implements ReservaService {
         return reservaMapper.entidadAResponse(actualizada);
     }
 
-    @Transactional
+
     @Override
     public void eliminar(Long id) {
 
         Reserva reserva = obtenerReservaActiva(id);
 
+        verificarReservaEliminable(reserva.getEstadoReserva());
+
         reserva.eliminar();
+
+
+        try {
+            liberarHabitacionRemota(reserva.getIdHabitacion());
+        } catch (FeignException.Conflict | IllegalStateException e) {
+            log.info("La habitacion {} ya estaba libre para la reserva eliminada", id);
+        }
         reservaRepository.save(reserva);
 
         log.info("Reserva {} eliminada logicamente", id);
@@ -125,12 +131,13 @@ public class ReservaServiceImpl implements ReservaService {
 
     @Transactional(readOnly = true)
     @Override
-    public boolean tieneReservasEnCurso(Long idHuesped) { //NOMBRE AMBIGUO
+    public void tieneReservasEnCurso(Long idHuesped) {
 
         ValoresNumerico.validarNumeroRequerido(idHuesped);
 
-        return reservaRepository.existsByIdHuespedAndEstadoReservaAndEstadoRegistro(
-                idHuesped, EstadoReserva.EN_CURSO, EstadoRegistro.ACTIVO);
+        if (reservaRepository.existsByIdHuespedAndEstadoReservaAndEstadoRegistro(
+                idHuesped, EstadoReserva.EN_CURSO, EstadoRegistro.ACTIVO))
+            throw new IllegalStateException("El huesped tiene reservas en curso y activas");
     }
 
     private Reserva obtenerReservaActiva(Long id) {
@@ -177,19 +184,6 @@ public class ReservaServiceImpl implements ReservaService {
         }
     }
 
-    private void validarHabitacionSinReservaVigente(Long idHabitacion) {
-
-        boolean tieneReservaVigente = reservaRepository
-                .existsByIdHabitacionAndEstadoReservaInAndEstadoRegistro(
-                        idHabitacion, ESTADOS_VIGENTES, EstadoRegistro.ACTIVO);
-
-        if (tieneReservaVigente) {
-            throw new IllegalStateException(
-                    "La habitacion " + idHabitacion + " ya tiene una reserva vigente"
-            );
-        }
-    }
-
     private void validarMismosParticipantes(Reserva reserva, ReservaRequest request) {
 
         if (!Objects.equals(reserva.getIdHuesped(), request.idHuesped())) {
@@ -216,10 +210,22 @@ public class ReservaServiceImpl implements ReservaService {
 
         try {
             habitacionClient.liberar(idHabitacion);
+
         } catch (FeignException.Conflict e) {
             throw new IllegalStateException(
                     "No se pudo liberar la habitacion " + idHabitacion
             );
         }
     }
+
+    private void verificarReservaEliminable(EstadoReserva estadoReserva) {
+        ObjectCustomUtils.validarObjVacios(estadoReserva, "La reserva es requerida");
+
+        if (!estadoReserva.isEliminable()) {
+            throw new IllegalStateException(
+                    "No se puede eliminar una reserva en estado " + estadoReserva
+                            + ", primero deve cancelarla o finalizarla");
+        }
+    }
+
 }

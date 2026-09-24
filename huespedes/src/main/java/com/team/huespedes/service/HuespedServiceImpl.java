@@ -7,7 +7,6 @@ import com.team.common.dto.huespedes.HuespedResponse;
 import com.team.common.client.ReservaClient;
 import com.team.common.enums.Documentacion;
 import com.team.common.enums.EstadoRegistro;
-import com.team.common.exceptions.EntidadRelacionadaException;
 import com.team.common.exceptions.RecursoNoEncontradoException;
 import com.team.common.utils.StringCustomUtils;
 import com.team.common.utils.ValoresNumerico;
@@ -30,10 +29,7 @@ public class HuespedServiceImpl implements HuespedService {
     private final HuespedRepository huespedRepository;
 
     private final HuespedMapper huespedMapper;
-
     private final ReservaClient reservaClient;
-
-    private static final String MENSAJE_DUPLICADO = "Ya existe un huesped ACTIVO con este %s";
 
     @Transactional(readOnly = true)
     @Override
@@ -69,9 +65,12 @@ public class HuespedServiceImpl implements HuespedService {
 
         Huesped huesped = obtenerHuespedActivo(id);
 
+        reservaClient.tieneReservasEnCurso(id);
+
         Huesped datos = huespedMapper.requestAEntidad(request);
 
         validarUnicidad(datos, id);
+
 
         huesped.actualizar(
                 datos.getNombre(),
@@ -89,30 +88,15 @@ public class HuespedServiceImpl implements HuespedService {
     }
 
     @Override
-    public void eliminar(Long id) {
+    public void eliminar(Long id) { //Huesped eliminar revisar y porque esta actualizar
 
         Huesped huesped = obtenerHuespedActivo(id);
 
-        if (reservaClient.tieneReservasEnCurso(id)) {
-            throw new EntidadRelacionadaException(
-                    "No se puede eliminar el huesped " + id
-                            + " porque tiene reservas EN_CURSO"
-            );
-        }
+        reservaClient.tieneReservasEnCurso(id);
 
         log.info("Eliminando logicamente el huesped con id {}", id);
 
-        huesped.actualizar(
-                huesped.getNombre(),
-                huesped.getApellidoPaterno(),
-                huesped.getApellidoMaterno(),
-                huesped.getEmail(),
-                huesped.getTelefono(),
-                huesped.getDocumento(),
-                huesped.getNumDocumento(),
-                huesped.getNacionalidad(),
-                EstadoRegistro.ELIMINADO
-        );
+        huesped.eliminar();
 
         huespedRepository.save(huesped);
     }
@@ -123,25 +107,23 @@ public class HuespedServiceImpl implements HuespedService {
         return huespedMapper.entidadAResponse(obtenerHuespedSinEstado(id));
     }
 
-    private Huesped obtenerHuespedActivo(Long id)
-    {
+    private Huesped obtenerHuespedActivo(Long id) {
         log.info("Obteniendo huesped activo con id {}", id);
 
         ValoresNumerico.validarNumeroRequerido(id);
 
-        return huespedRepository.findByIdHuespedAndEstadoRegistro(id,EstadoRegistro.ACTIVO).orElseThrow(
-                ()-> new RecursoNoEncontradoException("NO se ha encontrado el huesped activo con id "+id)
+        return huespedRepository.findByIdHuespedAndEstadoRegistro(id, EstadoRegistro.ACTIVO).orElseThrow(
+                () -> new RecursoNoEncontradoException("NO se ha encontrado el huesped activo con id " + id)
         );
     }
 
-    private Huesped obtenerHuespedSinEstado(Long id)
-    {
+    private Huesped obtenerHuespedSinEstado(Long id) {
         log.info("Obteniendo huesped sin estado  con id {}", id);
 
         ValoresNumerico.validarNumeroRequerido(id);
 
         return huespedRepository.findById(id).orElseThrow(
-                ()-> new RecursoNoEncontradoException("NO se ha encontrado el huesped con id "+id)
+                () -> new RecursoNoEncontradoException("NO se ha encontrado el huesped con id " + id)
         );
     }
 
@@ -155,12 +137,12 @@ public class HuespedServiceImpl implements HuespedService {
     }
 
     private void validarEmail(String email, Long idActual) {
-        StringCustomUtils.validarNoVacio(email,"El email del huesped es requerido");
+        StringCustomUtils.validarNoVacio(email, "El email del huesped es requerido");
 
         Optional<Huesped> huespedDuplicado = huespedRepository.findByEmailIgnoreCaseAndEstadoRegistro(email, EstadoRegistro.ACTIVO);
 
         if (huespedDuplicado.isPresent() && esOtroRegistro(huespedDuplicado.get(), idActual)) {
-            throw new IllegalStateException(String.format(MENSAJE_DUPLICADO, "email"));
+            throw new IllegalStateException("Este email ya se encuentra registrado :"+email);
         }
     }
 
@@ -170,7 +152,7 @@ public class HuespedServiceImpl implements HuespedService {
         Optional<Huesped> huespedDuplicado = huespedRepository.findByTelefonoAndEstadoRegistro(telefono, EstadoRegistro.ACTIVO);
 
         if (huespedDuplicado.isPresent() && esOtroRegistro(huespedDuplicado.get(), idActual)) {
-            throw new IllegalStateException(String.format(MENSAJE_DUPLICADO, "telefono"));
+            throw new IllegalStateException("Este telefono ya se encuentra registrado :"+telefono);
         }
     }
 
@@ -178,9 +160,10 @@ public class HuespedServiceImpl implements HuespedService {
         Optional<Huesped> huespedDuplicado = huespedRepository.findByDocumentoAndNumDocumentoAndEstadoRegistro(documento, numDocumento, EstadoRegistro.ACTIVO);
 
         if (huespedDuplicado.isPresent() && esOtroRegistro(huespedDuplicado.get(), idActual)) {
-            throw new IllegalStateException(MENSAJE_DUPLICADO.formatted("documento"));
+            throw new IllegalStateException("Este documento ya se encuentra registrado "+documento.getDescripcion()+numDocumento);
         }
     }
+
     private boolean esOtroRegistro(Huesped huesped, Long idActual) {
         return idActual == null || !huesped.getIdHuesped().equals(idActual);
     }

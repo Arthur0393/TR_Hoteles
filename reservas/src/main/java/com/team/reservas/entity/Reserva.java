@@ -48,7 +48,7 @@ public class Reserva {
     @Column(name = "ESTADO_REGISTRO", nullable = false, length = 15)
     private EstadoRegistro estadoRegistro = EstadoRegistro.ACTIVO;
 
-    public static Reserva crear(
+    public static Reserva crear( //Va en ENUM
             Long idHuesped,
             Long idHabitacion,
             LocalDate fechaEntrada,
@@ -72,7 +72,7 @@ public class Reserva {
 
         validarFechas(fechaEntrada, fechaSalida);
 
-        if (EstadoReserva.EN_CURSO.equals(this.estadoReserva)
+        if (this.estadoReserva.esSoloFechaSalida()
                 && !Objects.equals(this.fechaEntrada, fechaEntrada)) {
             throw new IllegalStateException(
                     "No se puede modificar la fecha de entrada de una reserva con check-in realizado"
@@ -87,14 +87,7 @@ public class Reserva {
         validarNoEliminada();
         ObjectCustomUtils.validarObjVacios(nuevoEstado, "El estado de la reserva es requerido");
 
-        boolean transicionValida = switch (this.estadoReserva) {
-            case CONFIRMADA -> nuevoEstado == EstadoReserva.EN_CURSO
-                    || nuevoEstado == EstadoReserva.CANCELADA;
-            case EN_CURSO -> nuevoEstado == EstadoReserva.FINALIZADA;
-            case FINALIZADA, CANCELADA -> false;
-        };
-
-        if (!transicionValida) {
+        if (!this.estadoReserva.puedeCambiarA(nuevoEstado)) {
             throw new IllegalStateException(
                     "No se puede cambiar una reserva de " + this.estadoReserva + " a " + nuevoEstado
             );
@@ -106,8 +99,7 @@ public class Reserva {
     public void eliminar() {
         validarNoEliminada();
 
-        if (EstadoReserva.CONFIRMADA.equals(this.estadoReserva)
-                || EstadoReserva.EN_CURSO.equals(this.estadoReserva)) {
+        if (!this.estadoReserva.isEliminable()) {
             throw new IllegalStateException(
                     "No se puede eliminar una reserva vigente, primero debe cancelarla o finalizarla"
             );
@@ -123,8 +115,7 @@ public class Reserva {
     }
 
     private void validarModificable() {
-        if (EstadoReserva.FINALIZADA.equals(this.estadoReserva)
-                || EstadoReserva.CANCELADA.equals(this.estadoReserva)) {
+        if (!this.estadoReserva.isActualizable()) {
             throw new IllegalStateException(
                     "No se puede modificar una reserva en estado " + this.estadoReserva
             );

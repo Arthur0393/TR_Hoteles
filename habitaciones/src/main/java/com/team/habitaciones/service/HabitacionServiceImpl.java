@@ -39,7 +39,7 @@ public class HabitacionServiceImpl implements HabitacionService {
         log.info("Consultando habitaciones activas");
 
         return habitacionRepository
-                .findAllByEstadoRegistro(EstadoRegistro.ACTIVO.name())
+                .findAllByEstadoRegistro(EstadoRegistro.ACTIVO)
                 .stream()
                 .map(habitacionesMapper::entidadAResponse)
                 .toList();
@@ -67,10 +67,10 @@ public class HabitacionServiceImpl implements HabitacionService {
         validarNumeroParaRegistro(request.numeroHabitacion());
 
         Habitacion habitacion = habitacionesMapper.requestAEntidad(request);
-        Habitacion guardada = habitacionRepository.save(habitacion);
+        habitacionRepository.save(habitacion);
 
-        log.info("Habitacion registrada con ID {}", guardada.getId());
-        return habitacionesMapper.entidadAResponse(guardada);
+        log.info("Habitacion registrada con ID {}", habitacion.getId());
+        return habitacionesMapper.entidadAResponse(habitacion);
     }
 
     /**
@@ -109,7 +109,7 @@ public class HabitacionServiceImpl implements HabitacionService {
 
         Habitacion habitacion = buscarHabitacionActiva(id);
 
-        if (EstadoHabitacion.OCUPADA.name().equals(habitacion.getEstadoHabitacion())) {
+        if (EstadoHabitacion.OCUPADA.equals(habitacion.getEstadoHabitacion())) {
             throw new IllegalStateException("No se puede eliminar una habitacion ocupada");
         }
 
@@ -161,6 +161,7 @@ public class HabitacionServiceImpl implements HabitacionService {
         log.info("Liberando habitacion con ID {} por solicitud de reservas", id);
 
         Habitacion habitacion = buscarHabitacionActiva(id);
+
         habitacion.liberar();
         habitacionRepository.save(habitacion);
     }
@@ -171,7 +172,7 @@ public class HabitacionServiceImpl implements HabitacionService {
      */
     private Habitacion buscarHabitacionActiva(Long id) {
         return habitacionRepository
-                .findByIdAndEstadoRegistro(id, EstadoRegistro.ACTIVO.name())
+                .findByIdAndEstadoRegistro(id, EstadoRegistro.ACTIVO)
                 .orElseThrow(() -> new RecursoNoEncontradoException(
                         "Habitacion con ID " + id + " no encontrada"
                 ));
@@ -182,7 +183,7 @@ public class HabitacionServiceImpl implements HabitacionService {
         boolean duplicado = habitacionRepository
                 .existsByNumeroHabitacionAndEstadoRegistro(
                         numeroHabitacion,
-                        EstadoRegistro.ACTIVO.name()
+                        EstadoRegistro.ACTIVO
                 );
 
         if (duplicado) {
@@ -200,7 +201,7 @@ public class HabitacionServiceImpl implements HabitacionService {
         boolean duplicado = habitacionRepository
                 .existsByNumeroHabitacionAndEstadoRegistroAndIdNot(
                         numeroHabitacion,
-                        EstadoRegistro.ACTIVO.name(),
+                        EstadoRegistro.ACTIVO,
                         id
                 );
 

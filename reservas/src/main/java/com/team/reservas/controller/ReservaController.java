@@ -245,15 +245,20 @@ public class ReservaController extends CrudController<ReservaRequest, ReservaRes
 
     @Operation(
             summary = "Consultar si el huésped tiene reservas en curso (uso interno)",
-            description = "Usado por el microservicio de huéspedes antes de una eliminación. Devuelve "
-                    + "true si existe una reserva EN_CURSO con registro ACTIVO para ese ID. No "
-                    + "comprueba la existencia del huésped; si no hay coincidencias devuelve false."
+            description = "Usado por el microservicio de huéspedes antes de una eliminación. Lanza "
+                    + "un error 409 si existe una reserva EN_CURSO con registro ACTIVO para ese ID. No "
+                    + "comprueba la existencia del huésped; si no hay coincidencias responde sin cuerpo."
     )
     @ApiResponses({
             @ApiResponse(
                     responseCode = "200",
-                    description = "Resultado de la consulta: true o false.",
-                    content = @Content(schema = @Schema(implementation = Boolean.class))
+                    description = "El huésped no tiene reservas en curso; respuesta sin cuerpo.",
+                    content = @Content
+            ),
+            @ApiResponse(
+                    responseCode = "409",
+                    description = "El huésped tiene reservas en curso.",
+                    content = @Content(schema = @Schema(implementation = CustomErrorResponse.class))
             ),
             @ApiResponse(
                     responseCode = "400",
@@ -262,10 +267,9 @@ public class ReservaController extends CrudController<ReservaRequest, ReservaRes
             )
     })
     @GetMapping("/id-huesped/{idHuesped}/en-curso")
-    public boolean tieneReservasEnCurso(
-            @Parameter(description = "ID del huésped", example = "1", required = true)
-            @PathVariable @Positive(message = "El ID debe ser positivo") Long idHuesped
+    public void tieneReservasEnCurso(
+            @PathVariable @Positive(message = "El ID del huesped debe ser positivo") Long idHuesped
     ) {
-        return service.tieneReservasEnCurso(idHuesped);
+        service.tieneReservasEnCurso(idHuesped);
     }
 }
