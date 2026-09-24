@@ -114,7 +114,14 @@ public class ReservaServiceImpl implements ReservaService {
 
         Reserva reserva = obtenerReservaActiva(id);
         reserva.eliminar();
-        liberarHabitacionRemota(id);
+
+        // Defensa: solo FINALIZADA/CANCELADA son eliminables y ya liberaron su
+        // habitacion al transicionar; el 409 aqui solo significa que ya estaba libre.
+        try {
+            liberarHabitacionRemota(reserva.getIdHabitacion());
+        } catch (FeignException.Conflict | IllegalStateException e) {
+            log.info("La habitacion {} ya estaba libre para la reserva eliminada", id);
+        }
         reservaRepository.save(reserva);
 
         log.info("Reserva {} eliminada logicamente", id);
