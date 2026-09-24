@@ -3,12 +3,14 @@ package com.team.common.enums;
 
 import com.team.common.exceptions.RecursoNoEncontradoException;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 import java.util.EnumSet;
 import java.util.Objects;
 import java.util.Set;
 
 @Getter
+@RequiredArgsConstructor
 public enum EstadoReserva {
 
     CONFIRMADA(1L, "Reserva creada", true, false) {
@@ -48,13 +50,6 @@ public enum EstadoReserva {
 
 
     private final boolean eliminable;
-
-    EstadoReserva(Long codigo, String descripcion, boolean actualizable, boolean eliminable) {
-        this.codigo = codigo;
-        this.descripcion = descripcion;
-        this.actualizable = actualizable;
-        this.eliminable = eliminable;
-    }
 
 
     public boolean esSoloFechaSalida() {

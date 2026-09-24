@@ -63,11 +63,12 @@ public class HuespedServiceImpl implements HuespedService {
 
         Huesped huesped = obtenerHuespedActivo(id);
 
+        reservaClient.tieneReservasEnCurso(id);
+
         Huesped datos = huespedMapper.requestAEntidad(request);
 
         validarUnicidad(datos, id);
 
-        reservaClient.tieneReservasEnCurso(id);
 
         huesped.actualizar(
                 datos.getNombre(),
