@@ -161,6 +161,7 @@ public class HabitacionServiceImpl implements HabitacionService {
         log.info("Liberando habitacion con ID {} por solicitud de reservas", id);
 
         Habitacion habitacion = buscarHabitacionActiva(id);
+
         habitacion.liberar();
         habitacionRepository.save(habitacion);
     }
