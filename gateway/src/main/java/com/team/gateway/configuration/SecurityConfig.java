@@ -2,6 +2,7 @@ package com.team.gateway.configuration;
 
 
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
@@ -12,6 +13,7 @@ import org.springframework.web.cors.CorsConfiguration;
 
 import java.util.List;
 
+@Configuration
 public class SecurityConfig {
 
 
