@@ -48,7 +48,7 @@ public class Reserva {
     @Column(name = "ESTADO_REGISTRO", nullable = false, length = 15)
     private EstadoRegistro estadoRegistro = EstadoRegistro.ACTIVO;
 
-    public static Reserva crear(
+    public static Reserva crear( //Va en ENUM
             Long idHuesped,
             Long idHabitacion,
             LocalDate fechaEntrada,

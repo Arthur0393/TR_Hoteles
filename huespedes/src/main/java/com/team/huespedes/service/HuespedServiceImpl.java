@@ -85,7 +85,7 @@ public class HuespedServiceImpl implements HuespedService {
     }
 
     @Override
-    public void eliminar(Long id) {
+    public void eliminar(Long id) { //Huesped eliminar revisar y porque esta actualizar
 
         Huesped huesped = obtenerHuespedActivo(id);
 

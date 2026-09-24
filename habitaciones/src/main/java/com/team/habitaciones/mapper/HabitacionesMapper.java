@@ -24,8 +24,8 @@ public class HabitacionesMapper
                 .tipoHabitacion(request.tipoHabitacion().name())
                 .precio(request.precio())
                 .capacidad(request.capacidad())
-                .estadoHabitacion(EstadoHabitacion.DISPONIBLE.name())
-                .estadoRegistro(EstadoRegistro.ACTIVO.name())
+                .estadoHabitacion(EstadoHabitacion.DISPONIBLE)
+                .estadoRegistro(EstadoRegistro.ACTIVO)
                 .build();
     }
 
@@ -40,8 +40,8 @@ public class HabitacionesMapper
                 TipoHabitacion.valueOf(habitacion.getTipoHabitacion()),
                 habitacion.getPrecio(),
                 habitacion.getCapacidad(),
-                EstadoHabitacion.valueOf(habitacion.getEstadoHabitacion()),
-                EstadoRegistro.valueOf(habitacion.getEstadoRegistro())
+                habitacion.getEstadoHabitacion(),
+                habitacion.getEstadoRegistro()
         );
     }
 }
