@@ -25,6 +25,7 @@ import java.util.Objects;
 @Service
 @AllArgsConstructor
 @Slf4j
+@Transactional
 public class ReservaServiceImpl implements ReservaService {
 
     private final ReservaRepository reservaRepository;
@@ -71,7 +72,7 @@ public class ReservaServiceImpl implements ReservaService {
         return reservaMapper.entidadAResponse(guardada);
     }
 
-    @Transactional
+
     @Override
     public ReservaResponse actualizar(ReservaRequest request, Long id) {
 
@@ -86,7 +87,7 @@ public class ReservaServiceImpl implements ReservaService {
         return reservaMapper.entidadAResponse(reservaRepository.saveAndFlush(reserva));
     }
 
-    @Transactional
+
     @Override
     public ReservaResponse cambiarEstado(Long idReserva, Long idEstado) {
 
@@ -106,7 +107,7 @@ public class ReservaServiceImpl implements ReservaService {
         return reservaMapper.entidadAResponse(actualizada);
     }
 
-    @Transactional
+
     @Override
     public void eliminar(Long id) {
 
