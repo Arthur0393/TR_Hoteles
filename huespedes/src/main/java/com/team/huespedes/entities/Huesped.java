@@ -6,14 +6,11 @@ import com.team.common.enums.EstadoRegistro;
 import com.team.common.utils.ObjectCustomUtils;
 import com.team.common.utils.StringCustomUtils;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Table(name = "HUESPEDES")
-@AllArgsConstructor
-@NoArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 @Entity
 @Getter
@@ -24,37 +21,37 @@ public class Huesped {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID_HUESPED")
-    Long idHuesped;
+    private Long idHuesped;
 
     @Column(name = "NOMBRE",nullable = false,length = 50)
-    String nombre;
+    private  String nombre;
 
     @Column(name = "APELLIDO_PATERNO",nullable = false,length = 50)
-    String apellidoPaterno;
+    private  String apellidoPaterno;
 
     @Column(name = "APELLIDO_MATERNO",nullable = false,length = 50)
-    String apellidoMaterno;
+    private  String apellidoMaterno;
 
     @Column(name = "EMAIL",nullable = false,length = 100)
-    String email;
+    private  String email;
 
     @Column(name = "TELEFONO",nullable = false,length = 10)
-    String telefono;
+    private  String telefono;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "DOCUMENTO",nullable = false,length = 30)
-    Documentacion documento;
+    private  Documentacion documento;
 
     @Column(name = "NUM_DOCUMENTO",nullable = false,length = 5)
-    String numDocumento;
+    private  String numDocumento;
 
     @Column(name = "NACIONALIDAD",nullable = false,length = 30)
-    String nacionalidad;
+    private  String nacionalidad;
 
     @Enumerated(EnumType.STRING)
     @Builder.Default
     @Column(name = "ESTADO_REGISTRO",nullable = false,length = 15)
-    EstadoRegistro estadoRegistro=EstadoRegistro.ACTIVO;
+    private EstadoRegistro estadoRegistro=EstadoRegistro.ACTIVO;
 
 
     public static Huesped crear(String nombre, String apellidoPaterno, String apellidoMaterno, String email, String telefono, Documentacion documento,
@@ -94,6 +91,18 @@ public class Huesped {
         this.nacionalidad = nacionalidad;
         this.estadoRegistro = estadoRegistro;
     }
+
+    public void eliminar()
+    {
+
+        if (EstadoRegistro.ELIMINADO.equals(this.estadoRegistro)) {
+            throw new IllegalStateException("El huesped ya se encuentra eliminado");
+        }
+
+        this.estadoRegistro=EstadoRegistro.ELIMINADO;
+
+    }
+
 
 
 
