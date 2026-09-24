@@ -19,6 +19,8 @@ import lombok.NoArgsConstructor;
 @Getter
 public class Huesped {
 
+
+    //private y logica de actualizar, esta logica va en el enum
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID_HUESPED")
