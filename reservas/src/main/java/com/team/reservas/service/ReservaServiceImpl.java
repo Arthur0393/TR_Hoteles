@@ -196,6 +196,12 @@ public class ReservaServiceImpl implements ReservaService {
             throw new IllegalStateException(
                     "La habitacion " + idHabitacion + " ya no esta disponible para reservar"
             );
+        } catch (FeignException.Forbidden | FeignException.Unauthorized e) {
+            log.error("La habitacion rechazo la operacion interna: {}", e.getMessage());
+            throw new IllegalStateException(
+                    "La habitacion " + idHabitacion + " no permitio la operacion interna; "
+                            + "verifique la credencial interna de microservicios"
+            );
         }
     }
 
@@ -207,6 +213,12 @@ public class ReservaServiceImpl implements ReservaService {
         } catch (FeignException.Conflict e) {
             throw new IllegalStateException(
                     "No se pudo liberar la habitacion " + idHabitacion
+            );
+        } catch (FeignException.Forbidden | FeignException.Unauthorized e) {
+            log.error("La habitacion rechazo la operacion interna: {}", e.getMessage());
+            throw new IllegalStateException(
+                    "La habitacion " + idHabitacion + " no permitio la operacion interna; "
+                            + "verifique la credencial interna de microservicios"
             );
         }
     }
