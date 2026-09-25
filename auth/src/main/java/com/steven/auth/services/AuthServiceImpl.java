@@ -7,6 +7,7 @@ import java.util.UUID;
 import com.steven.auth.services.AuthService;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -57,7 +58,7 @@ public class AuthServiceImpl implements AuthService {
 
         if (userDetails == null || !new BCryptPasswordEncoder().matches(
                 request.password(), userDetails.getPassword()) ) {
-            throw new IllegalArgumentException("Credenciales inválidas");
+            throw new BadCredentialsException("Credenciales inválidas");
         }
 
         Instant now = Instant.now();

@@ -16,10 +16,12 @@ public class UsuarioMapper {
     public UsuarioResponse entityToResponse(Usuario usuario) {
         if (usuario == null) return null;
         return new UsuarioResponse(
+                usuario.getId(),
                 usuario.getUsername(),
                 usuario.getRoles().stream()
                         .map(Rol::getNombre)
-                        .collect(Collectors.toSet())
+                        .collect(Collectors.toSet()),
+                usuario.getEstadoRegistro()
         );
     }
 
@@ -27,7 +29,7 @@ public class UsuarioMapper {
         if (request == null) return null;
         Usuario usuario = new Usuario();
         usuario.setUsername(request.username().trim());
-        usuario.setPassword(password.trim());
+        usuario.setPassword(password);
         usuario.setRoles(roles);
         return usuario;
     }

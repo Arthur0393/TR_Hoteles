@@ -114,6 +114,36 @@ El alumno debe diseñar e implementar completamente la siguiente arquitectura:
 
 ## 👥 Roles del Sistema
 
+### Configuración de los permisos de habitaciones
+
+El Gateway y el servicio Habitaciones permiten consultar a `ADMIN` y `USER`,
+pero crear, editar, cambiar estados manualmente y eliminar habitaciones requiere
+`ADMIN`. Las rutas `/{id}/ocupar` y `/{id}/liberar` son internas: el Gateway las
+bloquea para ambos roles.
+
+Reservas llama esas rutas por Feign con el JWT del usuario y una credencial
+interna adicional. Configura `RESERVAS_HABITACIONES_INTERNAL_TOKEN` con el mismo
+valor aleatorio en el entorno de **Reservas y Habitaciones**. Puedes generar un
+valor con `openssl rand -hex 32`; no lo publiques ni lo incluyas en Angular.
+Los archivos `.env.example` de ambos módulos incluyen la variable. Los `.env`
+locales están excluidos de Git y deben cargarse en el entorno al iniciar Java
+(por ejemplo, mediante la configuración de ejecución del IDE).
+
+Sin esa credencial, o si no coincide, las operaciones internas devuelven 403.
+La credencial no reemplaza el JWT ni permite modificar precios o datos como USER.
+Después de cambiar esta configuración o recompilar `common`, reinicia Reservas,
+Habitaciones y Gateway para aplicar los cambios.
+
+Las pruebas de regresión son `GatewaySecurityTest`, `HabitacionSecurityTest` y
+`FeignClientConfigTest`; no requieren Oracle ni arrancar Auth. Para ejecutarlas,
+instala primero `common` con su prueba y después prueba los otros dos módulos:
+
+```bash
+sh common/mvnw -f common/pom.xml -Dtest=FeignClientConfigTest install
+sh habitaciones/mvnw -f habitaciones/pom.xml -Dtest=HabitacionSecurityTest test
+sh gateway/mvnw -f gateway/pom.xml -Dtest=GatewaySecurityTest test
+```
+
 ### USER (Recepcionista)
 Puede:
 • Registrar y consultar huéspedes
@@ -433,3 +463,35 @@ Este proyecto no se evalúa por apariencia ni solo por funcionar. Se evalúa:
 
 📌 Una regla violada invalida el flujo completo.
 📌 En sistemas reales, la lógica de negocio no se negocia.
+
+## Operación de Auth: usuarios y migración de datos
+
+Los usuarios tienen `idUsuario` y `estadoRegistro` (`ACTIVO` / `ELIMINADO`).
+`GET`, `PUT` y `DELETE /admin/usuarios/{id}` utilizan el ID numérico, también en
+Angular. El listado y la consulta individual solo devuelven activos. DELETE
+conserva la fila, la contraseña cifrada y los roles; el usuario eliminado no puede
+iniciar una nueva sesión. La inicialización de cuentas de demostración no recrea
+cuentas que ya existen como eliminadas.
+
+PUT permite editar username, roles y contraseña. Si la contraseña se omite o se
+envía vacía, conserva la actual; una contraseña nueva pasa por validación y BCrypt.
+Un username ocupado por otro usuario ACTIVO devuelve 409. El username de un
+usuario ELIMINADO se puede reutilizar con un ID nuevo o mediante edición de otro
+usuario activo. Las tres operaciones requieren ADMIN.
+
+Antes de iniciar esta versión de Auth sobre un esquema existente, ejecutar como
+propietario AUTH la migración idempotente:
+
+```bash
+sqlplus AUTH@//localhost:1524/FREEPDB1 @DB/migrations/02_auth_borrado_logico.sql
+```
+
+La migración conserva los datos, añade `ESTADO_REGISTRO` e instala un índice único
+de Oracle únicamente para usernames ACTIVOS. Auth usa `ddl-auto=validate` por
+defecto para conservar el esquema entre reinicios. Carga las variables de
+`auth/.env` antes de arrancar y evita sobrescribir esa opción con `create-drop`.
+Actualiza Auth y Angular juntos porque las rutas de usuarios ahora usan ID.
+
+Las pruebas `UsuarioServiceTest` y `UsuarioRequestTest` no requieren Oracle.
+`AuthApplicationTests` también comprueba login y permisos y requiere DbAuth
+migrado y las variables de conexión cargadas.

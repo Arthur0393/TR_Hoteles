@@ -12,6 +12,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.EnumType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,11 +32,15 @@ public class Usuario {
     @Column(name = "ID_USUARIO")
     private Long id;
 
-    @Column(name = "USERNAME", nullable = false, length = 20, unique = true)
+    @Column(name = "USERNAME", nullable = false, length = 20)
     private String username;
 
     @Column(name = "PASSWORD", nullable = false)
     private String password;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "ESTADO_REGISTRO", nullable = false, length = 15)
+    private EstadoRegistro estadoRegistro = EstadoRegistro.ACTIVO;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(

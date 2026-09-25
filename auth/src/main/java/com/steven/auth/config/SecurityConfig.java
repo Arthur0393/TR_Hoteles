@@ -275,7 +275,7 @@ public class SecurityConfig {
                         return rolRepo.save(r);
                     });
 
-            if (userRepo.findByUsername("admin").isEmpty()) {
+            if (!userRepo.existsByUsername("admin")) {
                 Usuario admin = new Usuario();
                 admin.setUsername("admin");
                 admin.setPassword(encoder.encode("admin"));
@@ -283,7 +283,7 @@ public class SecurityConfig {
                 userRepo.save(admin);
             }
 
-            if (userRepo.findByUsername("usuario").isEmpty()) {
+            if (!userRepo.existsByUsername("usuario")) {
                 Usuario user = new Usuario();
                 user.setUsername("usuario");
                 user.setPassword(encoder.encode("usuario"));

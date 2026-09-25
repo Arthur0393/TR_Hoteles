@@ -101,7 +101,8 @@ public class Reserva {
 
         if (!this.estadoReserva.isEliminable()) {
             throw new IllegalStateException(
-                    "No se puede eliminar una reserva vigente, primero debe cancelarla o finalizarla"
+                    "No se puede eliminar una reserva en estado " + this.estadoReserva
+                            + "; solo se pueden eliminar reservas CONFIRMADAS"
             );
         }
 

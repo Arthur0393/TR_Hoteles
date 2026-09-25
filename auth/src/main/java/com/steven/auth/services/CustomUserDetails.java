@@ -1,6 +1,7 @@
 package com.steven.auth.services;
 
 import com.steven.auth.entities.Usuario;
+import com.steven.auth.entities.EstadoRegistro;
 import com.steven.auth.repositories.UsuarioRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +25,7 @@ public class CustomUserDetails implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         log.info("Buscando usuario {}", username);
 
-        Usuario usuario = usuarioRepository.findByUsername(username)
+        Usuario usuario = usuarioRepository.findByUsernameAndEstadoRegistro(username, EstadoRegistro.ACTIVO)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario " + username + " no encontrado"));
 
         return new User(

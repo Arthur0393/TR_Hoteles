@@ -170,8 +170,8 @@ public class ReservaController extends CrudController<ReservaRequest, ReservaRes
     @Override
     @Operation(
             summary = "Eliminar reserva",
-            description = "Elimina lógicamente una reserva FINALIZADA o CANCELADA. Una reserva CONFIRMADA "
-                    + "o EN_CURSO debe cancelarse o finalizarse primero."
+            description = "Elimina lógicamente una reserva CONFIRMADA y libera su habitación. "
+                    + "EN_CURSO no se puede eliminar; FINALIZADA y CANCELADA son de solo consulta histórica."
     )
     @ApiResponses({
             @ApiResponse(
@@ -191,7 +191,7 @@ public class ReservaController extends CrudController<ReservaRequest, ReservaRes
             ),
             @ApiResponse(
                     responseCode = "409",
-                    description = "La reserva sigue CONFIRMADA o EN_CURSO.",
+                    description = "La reserva está EN_CURSO, FINALIZADA o CANCELADA, o no se pudo liberar su habitación.",
                     content = @Content(schema = @Schema(implementation = CustomErrorResponse.class))
             )
     })

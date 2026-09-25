@@ -9,7 +9,6 @@ import com.team.common.enums.EstadoHabitacion;
 import com.team.common.enums.EstadoRegistro;
 import com.team.common.enums.EstadoReserva;
 import com.team.common.exceptions.RecursoNoEncontradoException;
-import com.team.common.utils.ObjectCustomUtils;
 import com.team.common.utils.ValoresNumerico;
 import com.team.reservas.entity.Reserva;
 import com.team.reservas.mapper.ReservaMapper;
@@ -114,16 +113,10 @@ public class ReservaServiceImpl implements ReservaService {
 
         Reserva reserva = obtenerReservaActiva(id);
 
-        verificarReservaEliminable(reserva.getEstadoReserva());
-
+        // La entidad rechaza EN_CURSO y los estados históricos antes de tocar Habitaciones.
         reserva.eliminar();
 
-
-        try {
-            liberarHabitacionRemota(reserva.getIdHabitacion());
-        } catch (FeignException.Conflict | IllegalStateException e) {
-            log.info("La habitacion {} ya estaba libre para la reserva eliminada", id);
-        }
+        liberarHabitacionRemota(reserva.getIdHabitacion());
         reservaRepository.save(reserva);
 
         log.info("Reserva {} eliminada logicamente", id);
@@ -215,16 +208,6 @@ public class ReservaServiceImpl implements ReservaService {
             throw new IllegalStateException(
                     "No se pudo liberar la habitacion " + idHabitacion
             );
-        }
-    }
-
-    private void verificarReservaEliminable(EstadoReserva estadoReserva) {
-        ObjectCustomUtils.validarObjVacios(estadoReserva, "La reserva es requerida");
-
-        if (!estadoReserva.isEliminable()) {
-            throw new IllegalStateException(
-                    "No se puede eliminar una reserva en estado " + estadoReserva
-                            + ", primero deve cancelarla o finalizarla");
         }
     }
 

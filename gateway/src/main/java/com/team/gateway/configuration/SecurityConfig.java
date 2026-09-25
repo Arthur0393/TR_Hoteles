@@ -30,6 +30,11 @@ public class SecurityConfig {
                     return corsConfiguration;
                 })).authorizeExchange(exchange -> exchange
                         .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        // Solo Reservas puede invocar estas operaciones directamente por Feign.
+                        .pathMatchers("/api/habitaciones/*/ocupar", "/api/habitaciones/*/liberar").denyAll()
+                        .pathMatchers(HttpMethod.GET, "/api/habitaciones", "/api/habitaciones/**")
+                            .hasAnyRole("ADMIN", "USER")
+                        .pathMatchers("/api/habitaciones", "/api/habitaciones/**").hasRole("ADMIN")
                         .pathMatchers(HttpMethod.GET, "/**").hasAnyRole("ADMIN", "USER")
                         .pathMatchers(HttpMethod.POST, "/**").hasAnyRole("ADMIN", "USER")
                         .pathMatchers(HttpMethod.PUT, "/**").hasAnyRole("ADMIN", "USER")

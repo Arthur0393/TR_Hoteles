@@ -1,0 +1,1 @@
+-- Existing DbAuth database: preserve its current schema.

@@ -27,14 +27,14 @@ public enum EstadoReserva {
         }
     },
 
-    FINALIZADA(3L, "Check-out realizado", false, true) {
+    FINALIZADA(3L, "Check-out realizado", false, false) {
         @Override
         public Set<EstadoReserva> puedeCambiar() {
             return Set.of();
         }
     },
 
-    CANCELADA(4L, "Reserva cancelada", false, true) {
+    CANCELADA(4L, "Reserva cancelada", false, false) {
         @Override
         public Set<EstadoReserva> puedeCambiar() {
             return Set.of();

@@ -7,6 +7,9 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.validation.annotation.Validated;
+import jakarta.validation.groups.Default;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -31,12 +34,23 @@ public class UsuarioController {
     }
 
     @PostMapping
-    public ResponseEntity<UsuarioResponse> registrar(@Valid @RequestBody UsuarioRequest request) {
+    public ResponseEntity<UsuarioResponse> registrar(
+            @Validated({Default.class, UsuarioRequest.Creacion.class}) @RequestBody UsuarioRequest request) {
         return ResponseEntity.ok(usuarioService.registrar(request));
     }
 
-    @DeleteMapping("/{username}")
-    public ResponseEntity<UsuarioResponse> eliminar(@PathVariable String username) {
-        return ResponseEntity.ok(usuarioService.eliminar(username));
+    @GetMapping("/{id}")
+    public ResponseEntity<UsuarioResponse> obtenerPorId(@PathVariable Long id) {
+        return ResponseEntity.ok(usuarioService.obtenerPorId(id));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<UsuarioResponse> actualizar(@PathVariable Long id, @Valid @RequestBody UsuarioRequest request) {
+        return ResponseEntity.ok(usuarioService.actualizar(id, request));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<UsuarioResponse> eliminar(@PathVariable Long id) {
+        return ResponseEntity.ok(usuarioService.eliminar(id));
     }
 }

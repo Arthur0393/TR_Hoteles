@@ -11,5 +11,9 @@ public interface UsuarioService {
 
     UsuarioResponse registrar(UsuarioRequest request);
 
-    UsuarioResponse eliminar(String username);
+    UsuarioResponse obtenerPorId(Long id);
+
+    UsuarioResponse actualizar(Long id, UsuarioRequest request);
+
+    UsuarioResponse eliminar(Long id);
 }
